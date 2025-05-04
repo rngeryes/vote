@@ -43,7 +43,7 @@
       overflow-x: hidden;
     }
     .wrap {
-      max-width: 380px;
+      max-width: 320px;
       margin: 0 auto;
       min-height: 100vh;
       display: flex;
@@ -207,6 +207,7 @@
     }
     .block-num {
       color: #fff;
+      text-shadow: 1px 1px 4px rgb(0, 0, 0);
       font-weight: bold;
       font-size: 1em;
       letter-spacing: 1px;
@@ -312,11 +313,13 @@
     <button class="bar-btn" data-tab="wallet">WALLET</button>
   </nav>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       if (window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.setHeaderColor && Telegram.WebApp.setHeaderColor('#000000');
-        Telegram.WebApp.setBackgroundColor && Telegram.WebApp.setBackgroundColor('#000000');
+        Telegram.WebApp.setHeaderColor && Telegram.WebApp.setHeaderColor('#111010');
+        Telegram.WebApp.setBackgroundColor && Telegram.WebApp.setBackgroundColor('#111010');
+            Telegram.WebApp.requestFullscreen && Telegram.WebApp.requestFullscreen();
       }
     });
   </script>
@@ -341,7 +344,7 @@
       maxEnergy: 2000
     });
     let info = load('info2', {
-      reward: 1.04387,
+      reward: 1,
       diff: randomDiff(),
     });
     let miningStats = load('miningStats2', {
@@ -400,18 +403,18 @@
           <div class="info-row">
             <span class="info-label">Block</span>
             <span class="info-value" id="block-num">#${nextBlock}</span>
-            <span class="info-label">Reward</span>
-            <span class="info-value" id="block-reward">${info.reward.toFixed(5)}</span>
-            <span class="info-label">Diff</span>
-            <span class="info-value" id="block-diff">${info.diff}K</span>
+             <span class="info-label">           </span>
+
+            <span class="info-label" style="margin-left:27px;">Reward</span>
+            <span class="info-value" id="block-reward">${info.reward.toFixed(0)}</span>
           </div>
         </div>
         <div class="section-title">Mining</div>
         <div class="panel">
           <div class="mine-row">
             <span class="mine-label">Status</span>
-            <span class="status-pill${mining ? ' mining' : ''}" id="mine-status">${mining ? "Mining" : "Idle"}</span>
-            <span class="mine-label" style="margin-left:18px;">Shares</span>
+            <span class="status-pill${mining ? ' mining' : ''}"style="margin-left:-25px;" id="mine-status">${mining ? "Mining" : "Idle"}</span>
+            <span class="mine-label" style="margin-left:10px;">Shares</span>
             <span class="mine-value" id="mine-shares">${miningStats.shares}</span>
           </div>
           <div class="mine-row">
@@ -432,7 +435,7 @@
       document.getElementById('main').innerHTML = html;
       document.getElementById('mine-btn').onclick = () => toggleMining();
       // Effects on status and button
-      encryptEffect("mine-status", mining ? "Mining" : "Idle", 600, 7, 12);
+      encryptEffect("mine-status", mining ? "Mining" : "Idle", 600, 7, 5);
       encryptEffect("mine-btn", mining ? "→ Stop mining ←" : "→ Start mining ←", 500, 8, 16);
     }
     function renderBlocksList() {
@@ -443,6 +446,7 @@
         <li class="block-item">
           <div class="block-top">
             <span class="block-num">Block #${i+1}</span>
+            
             <span class="block-label">My reward</span>
             <span class="block-arrow">→</span>
             <span class="block-reward">${b.reward}</span>
@@ -498,10 +502,10 @@
         if (!mining) return;
         miningStats.hash += Math.floor(1000 + Math.random()*1000);
         miningStats.shares += 1;
-        miningStats.income = (miningStats.shares * info.reward).toFixed(5);
-        encryptEffect("mine-shares", miningStats.shares, 300, 3, 5);
-        encryptEffect("mine-hash", miningStats.hash, 300, 4, 6);
-        encryptEffect("mine-income", miningStats.income, 300, 3, 7);
+        miningStats.income = (miningStats.shares * info.reward).toFixed(1);
+        encryptEffect("mine-shares", miningStats.shares, 300, 3, 2);
+        encryptEffect("mine-hash", miningStats.hash, 300, 4, 2);
+        encryptEffect("mine-income", miningStats.income, 300, 3, 2);
         // Sometimes mine a block
         if (Math.random() < 0.5) {
           let now = new Date();
@@ -515,7 +519,7 @@
           save('myBlocks2', myBlocks);
           save('profile2', profile);
           // New block, new diff
-          info.diff = randomDiff();
+        //  info.diff = randomDiff();
           save('info2', info);
           // Update block list and info
           if (currentTab === 'mine') {
