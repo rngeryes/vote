@@ -49,8 +49,10 @@
 }
     }
     .wrap {
-  max-width: 320px;
+  max-width: 300px;
+  width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
   padding-bottom: 70px;
   min-height: 100vh;
   display: flex;
@@ -271,17 +273,31 @@
     }
     /* Tabs */
     .bottom-bar {
-      position: fixed;
-      left: 0; right: 0; bottom: 0;
-      height: 48px;
-      background: var(--bg);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      border-top: 1px solid #232526;
-      z-index: 100;
-      font-size: 1em;
-    }
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 24px; /* смещение вверх */
+  height: 48px;
+  background: var(--bg);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #232526; /* только верхняя граница */
+  z-index: 100;
+  font-size: 1em;
+  overflow: visible;
+}
+
+.bottom-bar::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  top: 100%;
+  height: 24px; /* столько же, сколько bottom у .bottom-bar */
+  background: var(--bg);
+  /* border-top: 1px solid #232526;  <-- УБРАТЬ ЭТУ СТРОКУ! */
+  z-index: -1;
+  pointer-events: none;
+}
     .bar-btn {
       flex: 1;
       height: 100%;
@@ -336,7 +352,7 @@
       if (window.Telegram && Telegram.WebApp) {
         Telegram.WebApp.setHeaderColor && Telegram.WebApp.setHeaderColor('#111010');
         Telegram.WebApp.setBackgroundColor && Telegram.WebApp.setBackgroundColor('#111010');
-
+            Telegram.WebApp.requestFullscreen && Telegram.WebApp.requestFullscreen();
       }
     });
   </script>
