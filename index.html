@@ -1,481 +1,540 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Flappy Bird MiniApp</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@700&display=swap');
-        body {
-            margin: 0;
-            background: #70c5ce;
-            font-family: 'SF Pro Display', Arial, sans-serif;
-            overflow: hidden;
-        }
-        #game {
-            display: block;
-            margin: 0 auto;
-            background: #70c5ce;
-            touch-action: none;
-        }
-        #bottomBar {
-            position: fixed;
-            left: 0; bottom: 0;
-            width: 100vw;
-            height: 70px;
-            background: rgba(255,255,255,0.95);
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            z-index: 10;
-        }
-        .bar-btn {
-            flex: 1;
-            text-align: center;
-            font-size: 18px;
-            color: #222;
-            font-family: 'SF Pro Display', Arial, sans-serif;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .bar-btn.selected {
-            color: #007aff;
-        }
-        #coins {
-            position: fixed;
-            top: 20px; right: 20px;
-            background: rgba(255,255,255,0.8);
-            border-radius: 18px;
-            padding: 8px 18px;
-            font-size: 20px;
-            font-family: 'SF Pro Display', Arial, sans-serif;
-            font-weight: 700;
-            color: #222;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.09);
-            z-index: 10;
-            text-shadow: 0 2px 6px #fff, 0 0 2px #007aff;
-        }
-        /* Магазин */
-        #shopModal {
-            position: fixed;
-            left: 0; top: 0;
-            width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.35);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-        #shopContent {
-            background: #fff;
-            border-radius: 18px;
-            padding: 24px;
-            width: 90vw;
-            max-width: 360px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-            text-align: center;
-        }
-        .skin-btn {
-            margin: 10px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 12px;
-            background: #f0f0f0;
-            font-size: 18px;
-            font-family: 'SF Pro Display', Arial, sans-serif;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-        .skin-btn.selected {
-            background: #007aff;
-            color: #fff;
-        }
-        .skin-preview {
-            width: 48px; height: 48px;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 8px;
-        }
-        /* Тени для текста */
-        .shadow {
-            text-shadow: 0 2px 6px #222, 0 0 2px #fff;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Mining Game</title>
+  <style>
+    :root {
+      --bg: #111010;
+      --panel: #181818;
+      --border: #222;
+      --text: #eaeaea;
+      --text2: #bdbdbd;
+      --accent: #bfcfff;
+      --accent-btn: #c7cfff;
+      --accent-btn-active: #ffbfcf;
+      --yellow: #eae6b1;
+      --yellow-bg: #cfcba3;
+      --green: #d2eac5;
+      --bar: #a6c9e7;
+      --bar-bg: #222b3a;
+      --tab-active: #fff;
+      --tab-inactive: #bdbdbd;
+      --block-bg: #222218;
+      --block-mine-bg: #cfcba3;
+      --block-mine-txt: #222218;
+      --block-mine-label-bg: #eae6b1;
+      --block-mine-label-txt: #222218;
+      --block-mine-arrow: #222218;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
+      font-size: 16px;
+      box-sizing: border-box;
+      width: 100vw;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .wrap {
+      max-width: 420px;
+      margin: 0 auto;
+      padding-bottom: 70px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .section-title {
+      color: var(--text2);
+      font-size: 0.98em;
+      margin: 24px 0 8px 0;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      padding-left: 2px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px 14px 14px 14px;
+      margin-bottom: 8px;
+      box-sizing: border-box;
+    }
+    .profile-row, .info-row, .mine-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 1em;
+    }
+    .profile-label, .info-label, .mine-label {
+      color: var(--text2);
+      width: 90px;
+      font-size: 0.98em;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    .profile-value, .info-value, .mine-value {
+      font-weight: bold;
+      color: var(--text);
+      font-size: 1em;
+      min-width: 25px;
+    }
+    .energy-bar-wrap {
+      flex: 1;
+      margin-right: 10px;
+      height: 18px;
+      background: var(--bar-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      margin-left: 0;
+      margin-top: 2px;
+      margin-bottom: 2px;
+    }
+    .energy-bar {
+      background: var(--bar);
+      height: 100%;
+      width: 100%;
+      transition: width 0.3s;
+    }
+    .energy-value {
+      color: var(--text2);
+      font-weight: bold;
+      font-size: 1em;
+      margin-left: 8px;
+      min-width: 35px;
+      text-align: right;
+    }
+    .info-row {
+      margin-bottom: 4px;
+    }
+    .info-label {
+      width: 60px;
+      margin-right: 6px;
+      font-size: 0.97em;
+    }
+    .info-value {
+      margin-right: 10px;
+      font-size: 0.93em;
+      min-width: 44px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .mine-row {
+      margin-bottom: 4px;
+    }
+    .mine-value {
+      margin-right: 18px;
+    }
+    .status-pill {
+      background: var(--yellow-bg);
+      color: #222218;
+      border-radius: 4px;
+      padding: 1px 8px 2px 8px;
+      font-size: 0.98em;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      display: inline-block;
+      min-width: 60px;
+      text-align: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .status-pill.mining {
+      background: var(--accent-btn-active);
+      color: #222;
+    }
+    .mine-btn {
+      width: 100%;
+      margin: 18px 0 0 0;
+      padding: 13px 0;
+      background: #bfcfff;
+      color: #222;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.08em;
+      font-family: inherit;
+      font-weight: bold;
+      letter-spacing: 1px;
+      cursor: pointer;
+      outline: none;
+      transition: background 0.2s, color 0.2s;
+      box-shadow: 0 1px 0 0 #fff1, 0 2px 8px 0 #0002;
+      position: relative;
+    }
+    .mine-btn.mining {
+      background: #ffbfcf;
+      color: #222;
+    }
+    .mine-btn:active {
+      filter: brightness(0.98);
+    }
+    .mine-btn span {
+      pointer-events: none;
+    }
+    /* Blocks */
+    .blocks-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      background: none;
+      font-size: 1em;
+    }
+    .block-item {
+      background: var(--block-mine-bg);
+      color: var(--block-mine-txt);
+      border-radius: 7px;
+      margin-bottom: 8px;
+      padding: 13px 13px 7px 13px;
+      box-sizing: border-box;
+      border: none;
+      position: relative;
+      font-size: 1em;
+      font-weight: bold;
+    }
+    .block-top {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 2px;
+    }
+    .block-num {
+      color: #fff;
+      font-weight: bold;
+      font-size: 1em;
+      letter-spacing: 1px;
+    }
+    .block-label {
+      background: var(--block-mine-label-bg);
+      color: var(--block-mine-label-txt);
+      border-radius: 3px;
+      padding: 1px 7px 2px 7px;
+      font-size: 0.98em;
+      font-weight: bold;
+      margin-left: 7px;
+      margin-right: 7px;
+      display: inline-block;
+      min-width: 60px;
+      text-align: center;
+    }
+    .block-arrow {
+      color: var(--block-mine-arrow);
+      font-size: 1.1em;
+      font-weight: bold;
+      margin-left: 2px;
+      margin-right: 2px;
+    }
+    .block-reward {
+      font-size: 1em;
+      font-weight: bold;
+      margin-left: 2px;
+      min-width: 16px;
+      color: var(--block-mine-txt);
+    }
+    .block-bottom {
+      color: #444;
+      font-size: 0.97em;
+      margin-top: 4px;
+      margin-left: 3px;
+      font-weight: normal;
+    }
+    .block-creator {
+      color: var(--block-mine-txt);
+      font-weight: bold;
+      font-size: 1em;
+      margin-left: 10px;
+    }
+    /* Tabs */
+    .bottom-bar {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      height: 48px;
+      background: var(--bg);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #232526;
+      z-index: 100;
+      font-size: 1em;
+    }
+    .bar-btn {
+      flex: 1;
+      height: 100%;
+      border: none;
+      background: none;
+      color: var(--tab-inactive);
+      font-family: inherit;
+      font-size: 1em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: color 0.15s;
+      font-weight: bold;
+      letter-spacing: 1px;
+      outline: none;
+    }
+    .bar-btn.active {
+      color: var(--tab-active);
+    }
+    .bar-btn span {
+      font-size: 0.82em;
+      margin-top: 1px;
+      letter-spacing: 0.5px;
+    }
+    /* Adaptive */
+    @media (max-width: 480px) {
+      .wrap { max-width: 100vw; }
+      .panel { padding: 13px 7px 10px 7px; }
+      .block-item { padding: 10px 6px 6px 8px; }
+      .info-label { width: 42px; margin-right: 4px; }
+      .info-value { min-width: 30px; margin-right: 6px; }
+    }
+  </style>
 </head>
 <body>
-<canvas id="game" width="360" height="600"></canvas>
-<div id="coins">0 🪙</div>
-<div id="bottomBar">
-    <div class="bar-btn selected" id="btnGame">Игра</div>
-    <div class="bar-btn" id="btnShop">Скины</div>
-    <div class="bar-btn" id="btnSettings">Настройки</div>
-</div>
-<div id="shopModal">
-    <div id="shopContent">
-        <h2 class="shadow">Магазин скинов</h2>
-        <div>
-            <button class="skin-btn" data-skin="yellow"><span class="skin-preview" style="background:gold;border-radius:50%"></span>Жёлтая (0🪙)</button>
-            <button class="skin-btn" data-skin="blue"><span class="skin-preview" style="background:deepskyblue;border-radius:50%"></span>Голубая (10🪙)</button>
-            <button class="skin-btn" data-skin="red"><span class="skin-preview" style="background:#ff5252;border-radius:50%"></span>Красная (20🪙)</button>
-        </div>
-        <div style="margin-top:16px;">
-            <button class="skin-btn" onclick="closeShop()">Закрыть</button>
-        </div>
-    </div>
-</div>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>
-/* === Telegram Mini App: прозрачный хедер === */
-if(window.Telegram && Telegram.WebApp) {
-    Telegram.WebApp.expand();
-    Telegram.WebApp.setHeaderColor('rgba(0,0,0,0)');
-    Telegram.WebApp.setBackgroundColor('#70c5ce');
-}
-
-/* === Глобальные переменные === */
-const canvas = document.getElementById('game');
-const ctx = canvas.getContext('2d');
-let coins = parseInt(localStorage.getItem('flappy_coins') || '0');
-let selectedSkin = localStorage.getItem('flappy_skin') || 'yellow';
-let ownedSkins = JSON.parse(localStorage.getItem('flappy_skins') || '["yellow"]');
-let gameState = 'start'; // start, playing, gameover
-let score = 0;
-let pipes = [];
-let bird = {};
-let pipeTimer = 0;
-let gravity = 0.32;
-let flap = -6.5;
-let pipeGap = 170;
-let pipeSpeed = 1.4;
-let groundHeight = 80;
-let lastTap = 0;
-
-/* === Скины === */
-const skins = {
-    yellow: { color: 'gold', price: 0 },
-    blue:   { color: 'deepskyblue', price: 10 },
-    red:    { color: '#ff5252', price: 20 }
-};
-
-/* === Функции монет === */
-function saveCoins() {
-    localStorage.setItem('flappy_coins', coins);
-}
-function updateCoins() {
-    document.getElementById('coins').innerHTML = coins + ' 🪙';
-}
-
-/* === Магазин скинов === */
-function openShop() {
-    document.getElementById('shopModal').style.display = 'flex';
-    // Отметить выбранный скин
-    document.querySelectorAll('.skin-btn').forEach(btn => {
-        btn.classList.remove('selected');
-        if(btn.dataset.skin === selectedSkin) btn.classList.add('selected');
-        btn.onclick = function() {
-            let skin = btn.dataset.skin;
-            if(!skin) return;
-            if(ownedSkins.includes(skin)) {
-                selectedSkin = skin;
-                localStorage.setItem('flappy_skin', selectedSkin);
-                document.querySelectorAll('.skin-btn').forEach(b=>b.classList.remove('selected'));
-                btn.classList.add('selected');
-                closeShop();
-                draw();
-            } else {
-                // Покупка
-                let price = skins[skin].price;
-                if(coins >= price) {
-                    coins -= price;
-                    ownedSkins.push(skin);
-                    localStorage.setItem('flappy_skins', JSON.stringify(ownedSkins));
-                    saveCoins();
-                    updateCoins();
-                    selectedSkin = skin;
-                    localStorage.setItem('flappy_skin', selectedSkin);
-                    document.querySelectorAll('.skin-btn').forEach(b=>b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                    closeShop();
-                    draw();
-                } else {
-                    alert('Недостаточно монет!');
-                }
-            }
+  <div class="wrap">
+    <div id="main"></div>
+  </div>
+  <nav class="bottom-bar">
+    <button class="bar-btn active" data-tab="mine">MINING</button>
+    <button class="bar-btn" data-tab="upgrade">UPGRADE</button>
+    <button class="bar-btn" data-tab="tasks">TASKS</button>
+    <button class="bar-btn" data-tab="top">TOP</button>
+    <button class="bar-btn" data-tab="wallet">WALLET</button>
+  </nav>
+  <script>
+    // --- State ---
+    let mining = false;
+    let miningTimer = null;
+    let encryptAnim = {};
+    // --- localStorage ---
+    function load(key, def) {
+      try {
+        return JSON.parse(localStorage.getItem(key)) ?? def;
+      } catch(e) { return def; }
+    }
+    function save(key, val) {
+      localStorage.setItem(key, JSON.stringify(val));
+    }
+    let myBlocks = load('myBlocks2', []);
+    let profile = load('profile2', {
+      balance: myBlocks.length,
+      energy: 2000,
+      maxEnergy: 2000
+    });
+    let info = load('info2', {
+      reward: 1.04387,
+      diff: randomDiff(),
+    });
+    let miningStats = load('miningStats2', {
+      status: "Idle",
+      shares: 0,
+      hash: 0,
+      income: 0
+    });
+    let currentTab = "mine";
+    // --- Utils ---
+    function randomDiff() {
+      // Difficulty 2.1 - 3.9K
+      return (2 + Math.random()*2).toFixed(1);
+    }
+    function randomString(len) {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let s = '';
+      for (let i = 0; i < len; ++i) s += chars[Math.floor(Math.random() * chars.length)];
+      return s;
+    }
+    function encryptEffect(id, realText, duration=600, minLen=6, maxLen=12) {
+      if (encryptAnim[id]) clearInterval(encryptAnim[id]);
+      let el = document.getElementById(id);
+      if (!el) return;
+      let start = Date.now();
+      encryptAnim[id] = setInterval(() => {
+        let now = Date.now();
+        if (now - start >= duration) {
+          clearInterval(encryptAnim[id]);
+          el.textContent = realText;
+        } else {
+          el.textContent = randomString(Math.floor(Math.random()*(maxLen-minLen+1))+minLen);
         }
+      }, 40);
+    }
+    // --- Tabs ---
+    function renderMineTab() {
+      let nextBlock = myBlocks.length + 1;
+      let html = `
+        <div class="section-title">My profile</div>
+        <div class="panel">
+          <div class="profile-row">
+            <span class="profile-label">Balance</span>
+            <span class="profile-value" id="balance-value">${profile.balance}</span>
+          </div>
+          <div class="profile-row">
+            <span class="profile-label">Energy</span>
+            <div class="energy-bar-wrap">
+              <div class="energy-bar" id="energy-bar" style="width:${Math.round(profile.energy/profile.maxEnergy*100)}%"></div>
+            </div>
+            <span class="energy-value" id="energy-value">${profile.energy.toLocaleString()}</span>
+          </div>
+        </div>
+        <div class="section-title">Info</div>
+        <div class="panel">
+          <div class="info-row">
+            <span class="info-label">Block</span>
+            <span class="info-value" id="block-num">#${nextBlock}</span>
+            <span class="info-label">Reward</span>
+            <span class="info-value" id="block-reward">${info.reward.toFixed(5)}</span>
+            <span class="info-label">Diff</span>
+            <span class="info-value" id="block-diff">${info.diff}K</span>
+          </div>
+        </div>
+        <div class="section-title">Mining</div>
+        <div class="panel">
+          <div class="mine-row">
+            <span class="mine-label">Status</span>
+            <span class="status-pill${mining ? ' mining' : ''}" id="mine-status">${mining ? "Mining" : "Idle"}</span>
+            <span class="mine-label" style="margin-left:18px;">Shares</span>
+            <span class="mine-value" id="mine-shares">${miningStats.shares}</span>
+          </div>
+          <div class="mine-row">
+            <span class="mine-label">Hash</span>
+            <span class="mine-value" id="mine-hash">${miningStats.hash}</span>
+            <span class="mine-label" style="margin-left:18px;">Income</span>
+            <span class="mine-value" id="mine-income">${miningStats.income}</span>
+          </div>
+        </div>
+        <button class="mine-btn${mining ? ' mining' : ''}" id="mine-btn">
+          <span>→ Start mining ←</span>
+        </button>
+        <div class="section-title" style="margin-top:18px;">Recent blocks</div>
+        <ul class="blocks-list" id="blocks-list">
+          ${renderBlocksList()}
+        </ul>
+      `;
+      document.getElementById('main').innerHTML = html;
+      document.getElementById('mine-btn').onclick = () => toggleMining();
+      // Effects on status and button
+      encryptEffect("mine-status", mining ? "Mining" : "Idle", 600, 7, 12);
+      encryptEffect("mine-btn", mining ? "→ Stop mining ←" : "→ Start mining ←", 500, 8, 16);
+    }
+    function renderBlocksList() {
+      if (myBlocks.length === 0) {
+        return `<li class="block-item" style="background:none;color:#555;font-weight:normal;">No blocks</li>`;
+      }
+      return myBlocks.map((b, i) => `
+        <li class="block-item">
+          <div class="block-top">
+            <span class="block-num">Block #${i+1}</span>
+            <span class="block-label">My reward</span>
+            <span class="block-arrow">→</span>
+            <span class="block-reward">${b.reward}</span>
+          </div>
+          <div class="block-bottom">
+            <span>Created at ${b.time}</span>
+            <span class="block-creator">You</span>
+          </div>
+        </li>
+      `).join('');
+    }
+    function renderOtherTab(tab) {
+      let content = '';
+      if (tab === "upgrade") {
+        content = `<div class="section-title">Upgrades</div>
+        <div class="panel" style="text-align:center;opacity:.8;">Your energy is at maximum.<br>Upgrades coming soon!</div>`;
+      } else if (tab === "tasks") {
+        content = `<div class="section-title">Tasks</div>
+        <div class="panel" style="text-align:center;opacity:.8;">Complete tasks for rewards.<br>Coming soon!</div>`;
+      } else if (tab === "top") {
+        content = `<div class="section-title">Top</div>
+        <div class="panel" style="text-align:center;opacity:.8;">Leaderboard coming soon.</div>`;
+      } else if (tab === "wallet") {
+        content = `<div class="section-title">Wallet</div>
+        <div class="panel" style="text-align:center;opacity:.8;">Your balance: <b>${profile.balance}</b> blocks</div>`;
+      }
+      document.getElementById('main').innerHTML = content;
+    }
+    function setTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.bar-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+      if (tab === 'mine') renderMineTab();
+      else renderOtherTab(tab);
+    }
+    document.querySelectorAll('.bar-btn').forEach(btn => {
+      btn.onclick = () => setTab(btn.dataset.tab);
     });
-}
-function closeShop() {
-    document.getElementById('shopModal').style.display = 'none';
-}
-
-/* === Навигация нижнего бара === */
-document.getElementById('btnGame').onclick = function() {
-    this.classList.add('selected');
-    document.getElementById('btnShop').classList.remove('selected');
-    document.getElementById('btnSettings').classList.remove('selected');
-    closeShop();
-};
-document.getElementById('btnShop').onclick = function() {
-    this.classList.add('selected');
-    document.getElementById('btnGame').classList.remove('selected');
-    document.getElementById('btnSettings').classList.remove('selected');
-    openShop();
-};
-document.getElementById('btnSettings').onclick = function() {
-    this.classList.add('selected');
-    document.getElementById('btnGame').classList.remove('selected');
-    document.getElementById('btnShop').classList.remove('selected');
-    alert('Настройки пока недоступны 🙂');
-};
-
-/* === Инициализация птицы === */
-function resetBird() {
-    bird = {
-        x: 80,
-        y: canvas.height/2,
-        vy: 0,
-        w: 34,
-        h: 34
-    };
-}
-
-/* === Рисуем птицу с тенью === */
-function drawBird() {
-    // Тень
-    ctx.save();
-    ctx.globalAlpha = 0.18;
-    ctx.beginPath();
-    ctx.ellipse(bird.x+bird.w/2, bird.y+bird.h-2, 18, 6, 0, 0, 2*Math.PI);
-    ctx.fillStyle = "#222";
-    ctx.fill();
-    ctx.restore();
-    // Птица
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(bird.x+17, bird.y+17, 17, 0, 2*Math.PI);
-    ctx.fillStyle = skins[selectedSkin].color;
-    ctx.shadowColor = "#fff";
-    ctx.shadowBlur = 8;
-    ctx.fill();
-    ctx.restore();
-    // Глаз
-    ctx.beginPath();
-    ctx.arc(bird.x+23, bird.y+15, 5, 0, 2*Math.PI);
-    ctx.fillStyle = "#fff";
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(bird.x+25, bird.y+15, 2, 0, 2*Math.PI);
-    ctx.fillStyle = "#222";
-    ctx.fill();
-    // Клюв
-    ctx.beginPath();
-    ctx.moveTo(bird.x+32, bird.y+20);
-    ctx.lineTo(bird.x+40, bird.y+22);
-    ctx.lineTo(bird.x+32, bird.y+24);
-    ctx.closePath();
-    ctx.fillStyle = "#ffb300";
-    ctx.fill();
-    // Обводка
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "#222";
-    ctx.strokeRect(bird.x, bird.y, bird.w, bird.h);
-}
-
-/* === Рисуем трубы === */
-function drawPipes() {
-    pipes.forEach(pipe => {
-        // Верхняя труба
-        ctx.save();
-        ctx.fillStyle = "#1edc36";
-        ctx.fillRect(pipe.x, 0, 52, pipe.top);
-        ctx.fillStyle = "#0a8e21";
-        ctx.fillRect(pipe.x, pipe.top-18, 52, 18);
-        ctx.restore();
-        // Нижняя труба
-        ctx.save();
-        ctx.fillStyle = "#1edc36";
-        ctx.fillRect(pipe.x, pipe.bottom, 52, canvas.height - pipe.bottom - groundHeight);
-        ctx.fillStyle = "#0a8e21";
-        ctx.fillRect(pipe.x, pipe.bottom, 52, 18);
-        ctx.restore();
-    });
-}
-
-/* === Рисуем фон === */
-function drawBackground() {
-    // Небо уже есть
-    // Облака
-    ctx.save();
-    ctx.globalAlpha = 0.13;
-    for(let i=0;i<3;i++) {
-        ctx.beginPath();
-        ctx.arc(80+i*120, 160, 50, 0, 2*Math.PI);
-        ctx.arc(120+i*120, 140, 40, 0, 2*Math.PI);
-        ctx.arc(160+i*120, 170, 30, 0, 2*Math.PI);
-        ctx.fillStyle = "#fff";
-        ctx.fill();
+    // --- Mining ---
+    function toggleMining() {
+      mining = !mining;
+      miningStats.status = mining ? "Mining" : "Idle";
+      setTab('mine');
+      if (mining) startMining();
+      else stopMining();
     }
-    ctx.globalAlpha = 1;
-    ctx.restore();
-    // Город
-    ctx.save();
-    ctx.globalAlpha = 0.18;
-    ctx.fillStyle = "#b2e6f2";
-    for(let i=0;i<8;i++) {
-        ctx.fillRect(i*50, 480, 30, 80);
-    }
-    ctx.restore();
-}
-
-/* === Рисуем землю === */
-function drawGround() {
-    ctx.save();
-    ctx.fillStyle = "#ded895";
-    ctx.fillRect(0, canvas.height-groundHeight, canvas.width, groundHeight);
-    ctx.restore();
-}
-
-/* === Рисуем счет === */
-function drawScore() {
-    ctx.save();
-    ctx.font = "bold 48px 'SF Pro Display', Arial, sans-serif";
-    ctx.fillStyle = "#fff";
-    ctx.textAlign = "center";
-    ctx.shadowColor = "#222";
-    ctx.shadowBlur = 8;
-    ctx.fillText(score, canvas.width/2, 80);
-    ctx.restore();
-}
-
-/* === Основной рендер === */
-function draw() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    drawBackground();
-    drawPipes();
-    drawGround();
-    drawBird();
-    if(gameState === 'playing') drawScore();
-    if(gameState === 'start') {
-        ctx.save();
-        ctx.font = "bold 32px 'SF Pro Display', Arial, sans-serif";
-        ctx.fillStyle = "#fff";
-        ctx.textAlign = "center";
-        ctx.shadowColor = "#222";
-        ctx.shadowBlur = 8;
-        ctx.fillText("Тапните чтобы начать", canvas.width/2, canvas.height/2-40);
-        ctx.font = "bold 22px 'SF Pro Display', Arial, sans-serif";
-        ctx.fillText("Flappy Bird MiniApp", canvas.width/2, canvas.height/2+8);
-        ctx.restore();
-    }
-    if(gameState === 'gameover') {
-        ctx.save();
-        ctx.font = "bold 38px 'SF Pro Display', Arial, sans-serif";
-        ctx.fillStyle = "#fff";
-        ctx.textAlign = "center";
-        ctx.shadowColor = "#222";
-        ctx.shadowBlur = 8;
-        ctx.fillText("Game Over", canvas.width/2, canvas.height/2-30);
-        ctx.font = "bold 22px 'SF Pro Display', Arial, sans-serif";
-        ctx.fillText("Счет: "+score, canvas.width/2, canvas.height/2+8);
-        ctx.fillText("Тапните для рестарта", canvas.width/2, canvas.height/2+38);
-        ctx.restore();
-    }
-}
-
-/* === Основной игровой цикл === */
-function gameLoop() {
-    if(gameState !== 'playing') {
-        draw();
-        return;
-    }
-    // Физика птицы
-    bird.vy += gravity;
-    bird.y += bird.vy;
-    // Движение труб
-    pipes.forEach(pipe => pipe.x -= pipeSpeed);
-    // Добавление новых труб
-    pipeTimer += 1;
-    if(pipeTimer > 90) {
-        let top = Math.random()*(canvas.height-pipeGap-groundHeight-80)+30;
-        pipes.push({
-            x: canvas.width,
-            top: top,
-            bottom: top+pipeGap,
-            passed: false
-        });
-        pipeTimer = 0;
-    }
-    // Удаление старых труб
-    if(pipes.length && pipes[0].x < -60) pipes.shift();
-    // Столкновения
-    let collision = false;
-    pipes.forEach(pipe => {
-        if(!pipe.passed && pipe.x+52 < bird.x) {
-            score++;
-            coins++;
-            pipe.passed = true;
-            saveCoins();
-            updateCoins();
+    function startMining() {
+      if (miningTimer) clearInterval(miningTimer);
+      miningTimer = setInterval(() => {
+        if (!mining) return;
+        miningStats.hash += Math.floor(1000 + Math.random()*1000);
+        miningStats.shares += 1;
+        miningStats.income = (miningStats.shares * info.reward).toFixed(5);
+        encryptEffect("mine-shares", miningStats.shares, 300, 3, 5);
+        encryptEffect("mine-hash", miningStats.hash, 300, 4, 6);
+        encryptEffect("mine-income", miningStats.income, 300, 3, 7);
+        // Sometimes mine a block
+        if (Math.random() < 0.5) {
+          let now = new Date();
+          let reward = info.reward;
+          let time = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+          myBlocks.unshift({
+            reward: reward,
+            time: time
+          });
+          profile.balance = myBlocks.length;
+          save('myBlocks2', myBlocks);
+          save('profile2', profile);
+          // New block, new diff
+          info.diff = randomDiff();
+          save('info2', info);
+          // Update block list and info
+          if (currentTab === 'mine') {
+            document.getElementById('blocks-list').innerHTML = renderBlocksList();
+            document.getElementById('block-num').textContent = "#" + (myBlocks.length + 1);
+            document.getElementById('block-diff').textContent = info.diff + "K";
+          }
         }
-        if(
-            bird.x+bird.w > pipe.x && bird.x < pipe.x+52 &&
-            (bird.y < pipe.top || bird.y+bird.h > pipe.bottom)
-        ) collision = true;
-    });
-    if(bird.y+bird.h > canvas.height-groundHeight || bird.y < 0) collision = true;
-    if(collision) {
-        gameState = 'gameover';
-        setTimeout(()=>draw(), 100); // задержка для плавности
-        return;
+        // Energy decreases
+        if (profile.energy > 0) {
+          profile.energy -= 20;
+          if (profile.energy < 0) profile.energy = 0;
+          let bar = document.getElementById('energy-bar');
+          if (bar) bar.style.width = Math.round(profile.energy/profile.maxEnergy*100) + "%";
+          let val = document.getElementById('energy-value');
+          if (val) encryptEffect("energy-value", profile.energy.toLocaleString(), 200, 3, 6);
+          save('profile2', profile);
+        } else {
+          mining = false;
+          miningStats.status = "Idle";
+          setTab('mine');
+          stopMining();
+        }
+        save('miningStats2', miningStats);
+      }, 2500 + Math.random()*1000);
     }
-    draw();
-    requestAnimationFrame(gameLoop);
-}
-
-/* === Обработка тапов === */
-function jump() {
-    if(gameState === 'start') {
-        gameState = 'playing';
-        score = 0;
-        pipes = [];
-        pipeTimer = 0;
-        resetBird();
-        gameLoop();
-    } else if(gameState === 'playing') {
-        bird.vy = flap;
-    } else if(gameState === 'gameover') {
-        setTimeout(()=>{
-            gameState = 'start';
-            resetBird();
-            pipes = [];
-            pipeTimer = 0;
-            draw();
-        }, 350); // задержка для плавности
+    function stopMining() {
+      if (miningTimer) clearInterval(miningTimer);
+      miningTimer = null;
+      save('miningStats2', miningStats);
     }
-}
-canvas.addEventListener('touchstart', e => {
-    e.preventDefault();
-    jump();
-});
-canvas.addEventListener('mousedown', e => {
-    e.preventDefault();
-    jump();
-});
-
-/* === Инициализация === */
-function init() {
-    updateCoins();
-    resetBird();
-    draw();
-}
-init();
-
-/* === Окно ресайза (для мобильных) === */
-window.addEventListener('resize', ()=>{
-    // Можно сделать адаптив, если нужно
-});
-</script>
+    // --- Init ---
+    setTab('mine');
+  </script>
 </body>
 </html>
