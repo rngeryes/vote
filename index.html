@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Toncoin Balance</title>
+  <meta name="viewport" content="width=430, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+  <link rel="icon" href="ton.png">
+  <style>
+    @font-face {
+      font-family: 'BBAnonymPro-Medium';
+      src: url('BBAnonymPro-Medium.ttf') format('truetype');
+      font-weight: 500;
+    }
+    @font-face {
+      font-family: 'BBAnonymPro-Bold';
+      src: url('BBAnonymPro-Bold.ttf') format('truetype');
+      font-weight: 700;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      margin-bottom: 80px;
+      width: 100vw;
+      height: 100vh;
+      background: #fff;
+      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      overflow: hidden;
+      touch-action: none;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 80px;
+
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      width: 100vw;
+      box-sizing: border-box;
+    }
+    .container {
+      width: 100vw;
+      max-width: 430px;
+      margin: 0 auto;
+      padding-top: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .balance-block {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 30px;
+      animation: fadeInDown 0.7s;
+    }
+    .balance-title {
+      font-size: 20px;
+      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
+      color: #FFFFFF;
+      margin-bottom: 80px;
+      font-weight: 300;
+      letter-spacing: 0.01em;
+      text-align: center;
+    }
+    .balance-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 0;
+
+    }
+    .ton-icon {
+      width: 64px;
+      height: 64px;
+      margin-right: -10px;
+      margin-bottom: -9px;
+      object-fit: contain;
+      display: inline-block;
+      vertical-align: bottom;
+    }
+    .balance-value {
+      display: flex;
+      align-items: flex-end;
+      font-size: 56px;
+      font-family: 'BBAnonymPro-Bold', Arial, sans-serif;
+      color: #111;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 0.9;
+      text-align: center;
+    }
+    .balance-main {
+      font-size: 56px;
+      font-family: 'BBAnonymPro-Bold', Arial, sans-serif;
+      font-weight: 700;
+      color: #111;
+      line-height: 1;
+    }
+    .balance-decimals {
+      font-size: 38px; /* на 2pt меньше */
+      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
+      color: #111;
+      font-weight: 500;
+      margin-left: 2px;
+      margin-bottom: 3px;
+      letter-spacing: 0;
+      display: inline-block;
+    }
+    .balance-address {
+      font-size: 20px;
+      color: #bbb;
+      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
+      margin-top: 5px;
+      letter-spacing: 0.05em;
+      text-align: center;
+      font-weight: 500;
+    }
+    .connect-btn, .disconnect-btn {
+      display: block;
+      width: 90vw;
+      max-width: 360px;
+      height: 56px;
+      background: #eaeaea;
+      color: #111;
+      border: none;
+      border-radius: 18px;
+      font-size: 22px;
+      font-family: 'BBAnonymPro-Bold', Arial, sans-serif;
+      cursor: pointer;
+      margin: 0 auto;
+      margin-top: 120px;
+      margin-bottom: 32px;
+
+      transition: background 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.4s;
+      outline: none;
+      opacity: 0;
+      animation: fadeInUp 0.8s 0.2s forwards;
+      letter-spacing: 0.02em;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .connect-btn:active {
+      background: #eaeaea;
+      color: #111;
+      transform: scale(0.98);
+      box-shadow: 0 2px 8px #007aff33;
+    }
+    .disconnect-btn {
+      background: #eaeaea;
+      color: #111;
+      margin-top: 18px;
+      margin-bottom: 0;
+      font-size: 15px;
+      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
+      box-shadow: 0 2px 5px #0001;
+      animation-delay: 0s;
+    }
+    .disconnect-btn:active {
+      background: #dadada;
+      color: #222;
+    }
+    .welcome-block {
+      margin-top: 54px;
+      width: 85%;
+      max-width: 420px;
+      background: none;
+    }
+    .welcome-title {
+      font-size: 20px;
+      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
+      margin-bottom: 14px;
+      color: #111;
+      margin-left: 8px;
+    }
+    .welcome-card {
+      width: 100%;
+      height: 160px;
+      border-radius: 28px;
+      background: #e6e6e6;
+      position: relative;
+      box-shadow: 0 2px 12px #0001;
+      margin-top: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      overflow: hidden;
+      opacity: 0.8;
+    }
+    .welcome-switch {
+      width: 56px;
+      height: 22px;
+      border-radius: 12px;
+      background: #dadada;
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      opacity: 0.7;
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(40px);}
+      100% { opacity: 1; transform: none;}
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-36px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    /* Отключить выделение, скролл, зум */
+    ::-webkit-scrollbar { display: none; }
+    input, button, textarea, select {
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    * {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+  </style>
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="balance-block" id="balanceBlock">
+      <div class="balance-title">KEEPER</div>
+      <div class="balance-row">
+        <img src="ton.png" alt="TON" class="ton-icon">
+        <div class="balance-value">
+          <span class="balance-main" id="balanceMain">0</span>
+          <span class="balance-decimals" id="balanceDecimals">.000</span>
+        </div>
+      </div>
+      <div class="balance-address" id="balanceAddress"></div>
+    </div>
+    <button class="connect-btn" id="connectBtn">Connect TON Wallet</button>
+    <button class="disconnect-btn" id="disconnectBtn" style="display:none;">Disconnect</button>
+    <div class="welcome-block">
+      <div class="welcome-title">Welcome To Keeper!</div>
+      <div class="welcome-card">
+        <div class="welcome-switch"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // TON Connect UI
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+      manifestUrl: 'https://ton.vote/tonconnect-manifest.json'
+    });
+
+    const connectBtn = document.getElementById('connectBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const balanceBlock = document.getElementById('balanceBlock');
+    const balanceMain = document.getElementById('balanceMain');
+    const balanceDecimals = document.getElementById('balanceDecimals');
+    const balanceAddress = document.getElementById('balanceAddress');
+
+    function shortAddr(addr) {
+      if (!addr) return '';
+      return addr.slice(0, 4) + '...' + addr.slice(-4);
+    }
+    function animateBalance(newValue) {
+      let current = parseFloat(balanceMain.textContent + balanceDecimals.textContent.replace('.', ''));
+      let duration = 700;
+      let start = performance.now();
+      function animate(now) {
+        let progress = Math.min((now - start) / duration, 1);
+        let value = current + (newValue - current) * progress;
+        let [main, decimals] = value.toFixed(3).split('.');
+        balanceMain.textContent = main;
+        balanceDecimals.textContent = '.' + decimals;
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    connectBtn.addEventListener('click', () => {
+      tonConnectUI.openModal();
+    });
+    disconnectBtn.addEventListener('click', async () => {
+      await tonConnectUI.disconnect();
+      balanceBlock.style.display = 'none';
+      connectBtn.style.display = 'block';
+      disconnectBtn.style.display = 'none';
+    });
+    tonConnectUI.onStatusChange(async walletInfo => {
+      if (walletInfo && walletInfo.account && walletInfo.account.address) {
+        connectBtn.style.display = 'none';
+        disconnectBtn.style.display = 'block';
+        balanceBlock.style.display = 'flex';
+        let addr = walletInfo.account.address;
+        balanceAddress.textContent = shortAddr(addr);
+        try {
+          const resp = await fetch(`https://tonapi.io/v2/accounts/${addr}`);
+          const data = await resp.json();
+          let ton = data.balance ? (parseInt(data.balance) / 1e9) : 0;
+          animateBalance(ton);
+        } catch (e) {
+          animateBalance(0);
+        }
+      } else {
+        balanceBlock.style.display = 'none';
+        connectBtn.style.display = 'block';
+        disconnectBtn.style.display = 'none';
+      }
+    });
+    // Первое состояние: только кнопка connect
+    balanceBlock.style.display = 'none';
+    connectBtn.style.display = 'block';
+    disconnectBtn.style.display = 'none';
+  </script>
+</body>
+</html>
