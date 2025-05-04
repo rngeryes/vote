@@ -1,321 +1,481 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Toncoin Balance</title>
-  <meta name="viewport" content="width=430, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-  <link rel="icon" href="ton.png">
-  <style>
-    @font-face {
-      font-family: 'BBAnonymPro-Medium';
-      src: url('BBAnonymPro-Medium.ttf') format('truetype');
-      font-weight: 500;
-    }
-    @font-face {
-      font-family: 'BBAnonymPro-Bold';
-      src: url('BBAnonymPro-Bold.ttf') format('truetype');
-      font-weight: 700;
-    }
-    html, body {
-      margin: 0;
-      padding: 0;
-      margin-bottom: 80px;
-      width: 100vw;
-      height: 100vh;
-      background: #fff;
-      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      overflow: hidden;
-      touch-action: none;
-    }
-    body {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 80px;
-
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      width: 100vw;
-      box-sizing: border-box;
-    }
-    .container {
-      width: 100vw;
-      max-width: 430px;
-      margin: 0 auto;
-      padding-top: 50px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .balance-block {
-      width: 100%;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 30px;
-      animation: fadeInDown 0.7s;
-    }
-    .balance-title {
-      font-size: 20px;
-      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
-      color: #FFFFFF;
-      margin-bottom: 80px;
-      font-weight: 300;
-      letter-spacing: 0.01em;
-      text-align: center;
-    }
-    .balance-row {
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      width: 100%;
-      margin-bottom: 0;
-
-    }
-    .ton-icon {
-      width: 64px;
-      height: 64px;
-      margin-right: -10px;
-      margin-bottom: -9px;
-      object-fit: contain;
-      display: inline-block;
-      vertical-align: bottom;
-    }
-    .balance-value {
-      display: flex;
-      align-items: flex-end;
-      font-size: 56px;
-      font-family: 'BBAnonymPro-Bold', Arial, sans-serif;
-      color: #111;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      line-height: 0.9;
-      text-align: center;
-    }
-    .balance-main {
-      font-size: 56px;
-      font-family: 'BBAnonymPro-Bold', Arial, sans-serif;
-      font-weight: 700;
-      color: #111;
-      line-height: 1;
-    }
-    .balance-decimals {
-      font-size: 38px; /* на 2pt меньше */
-      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
-      color: #111;
-      font-weight: 500;
-      margin-left: 2px;
-      margin-bottom: 3px;
-      letter-spacing: 0;
-      display: inline-block;
-    }
-    .balance-address {
-      font-size: 20px;
-      color: #bbb;
-      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
-      margin-top: 5px;
-      letter-spacing: 0.05em;
-      text-align: center;
-      font-weight: 500;
-    }
-    .connect-btn, .disconnect-btn {
-      display: block;
-      width: 90vw;
-      max-width: 360px;
-      height: 56px;
-      background: #eaeaea;
-      color: #111;
-      border: none;
-      border-radius: 18px;
-      font-size: 22px;
-      font-family: 'BBAnonymPro-Bold', Arial, sans-serif;
-      cursor: pointer;
-      margin: 0 auto;
-      margin-top: 120px;
-      margin-bottom: 32px;
-
-      transition: background 0.2s, box-shadow 0.2s, transform 0.2s, opacity 0.4s;
-      outline: none;
-      opacity: 0;
-      animation: fadeInUp 0.8s 0.2s forwards;
-      letter-spacing: 0.02em;
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-    }
-    .connect-btn:active {
-      background: #eaeaea;
-      color: #111;
-      transform: scale(0.98);
-      box-shadow: 0 2px 8px #007aff33;
-    }
-    .disconnect-btn {
-      background: #eaeaea;
-      color: #111;
-      margin-top: 18px;
-      margin-bottom: 0;
-      font-size: 15px;
-      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
-      box-shadow: 0 2px 5px #0001;
-      animation-delay: 0s;
-    }
-    .disconnect-btn:active {
-      background: #dadada;
-      color: #222;
-    }
-    .welcome-block {
-      margin-top: 54px;
-      width: 85%;
-      max-width: 420px;
-      background: none;
-    }
-    .welcome-title {
-      font-size: 20px;
-      font-family: 'BBAnonymPro-Medium', Arial, sans-serif;
-      margin-bottom: 14px;
-      color: #111;
-      margin-left: 8px;
-    }
-    .welcome-card {
-      width: 100%;
-      height: 160px;
-      border-radius: 28px;
-      background: #e6e6e6;
-      position: relative;
-      box-shadow: 0 2px 12px #0001;
-      margin-top: 0;
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-end;
-      overflow: hidden;
-      opacity: 0.8;
-    }
-    .welcome-switch {
-      width: 56px;
-      height: 22px;
-      border-radius: 12px;
-      background: #dadada;
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      opacity: 0.7;
-    }
-    @keyframes fadeInUp {
-      0% { opacity: 0; transform: translateY(40px);}
-      100% { opacity: 1; transform: none;}
-    }
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-36px);}
-      to { opacity: 1; transform: translateY(0);}
-    }
-    /* Отключить выделение, скролл, зум */
-    ::-webkit-scrollbar { display: none; }
-    input, button, textarea, select {
-      -webkit-user-select: none;
-      user-select: none;
-      -webkit-touch-callout: none;
-    }
-    * {
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-  </style>
-  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Flappy Bird MiniApp</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@700&display=swap');
+        body {
+            margin: 0;
+            background: #70c5ce;
+            font-family: 'SF Pro Display', Arial, sans-serif;
+            overflow: hidden;
+        }
+        #game {
+            display: block;
+            margin: 0 auto;
+            background: #70c5ce;
+            touch-action: none;
+        }
+        #bottomBar {
+            position: fixed;
+            left: 0; bottom: 0;
+            width: 100vw;
+            height: 70px;
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            z-index: 10;
+        }
+        .bar-btn {
+            flex: 1;
+            text-align: center;
+            font-size: 18px;
+            color: #222;
+            font-family: 'SF Pro Display', Arial, sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .bar-btn.selected {
+            color: #007aff;
+        }
+        #coins {
+            position: fixed;
+            top: 20px; right: 20px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 18px;
+            padding: 8px 18px;
+            font-size: 20px;
+            font-family: 'SF Pro Display', Arial, sans-serif;
+            font-weight: 700;
+            color: #222;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+            z-index: 10;
+            text-shadow: 0 2px 6px #fff, 0 0 2px #007aff;
+        }
+        /* Магазин */
+        #shopModal {
+            position: fixed;
+            left: 0; top: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        #shopContent {
+            background: #fff;
+            border-radius: 18px;
+            padding: 24px;
+            width: 90vw;
+            max-width: 360px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            text-align: center;
+        }
+        .skin-btn {
+            margin: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            background: #f0f0f0;
+            font-size: 18px;
+            font-family: 'SF Pro Display', Arial, sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .skin-btn.selected {
+            background: #007aff;
+            color: #fff;
+        }
+        .skin-preview {
+            width: 48px; height: 48px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        /* Тени для текста */
+        .shadow {
+            text-shadow: 0 2px 6px #222, 0 0 2px #fff;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="balance-block" id="balanceBlock">
-      <div class="balance-title">KEEPER</div>
-      <div class="balance-row">
-        <img src="ton.png" alt="TON" class="ton-icon">
-        <div class="balance-value">
-          <span class="balance-main" id="balanceMain">0</span>
-          <span class="balance-decimals" id="balanceDecimals">.000</span>
+<canvas id="game" width="360" height="600"></canvas>
+<div id="coins">0 🪙</div>
+<div id="bottomBar">
+    <div class="bar-btn selected" id="btnGame">Игра</div>
+    <div class="bar-btn" id="btnShop">Скины</div>
+    <div class="bar-btn" id="btnSettings">Настройки</div>
+</div>
+<div id="shopModal">
+    <div id="shopContent">
+        <h2 class="shadow">Магазин скинов</h2>
+        <div>
+            <button class="skin-btn" data-skin="yellow"><span class="skin-preview" style="background:gold;border-radius:50%"></span>Жёлтая (0🪙)</button>
+            <button class="skin-btn" data-skin="blue"><span class="skin-preview" style="background:deepskyblue;border-radius:50%"></span>Голубая (10🪙)</button>
+            <button class="skin-btn" data-skin="red"><span class="skin-preview" style="background:#ff5252;border-radius:50%"></span>Красная (20🪙)</button>
         </div>
-      </div>
-      <div class="balance-address" id="balanceAddress"></div>
+        <div style="margin-top:16px;">
+            <button class="skin-btn" onclick="closeShop()">Закрыть</button>
+        </div>
     </div>
-    <button class="connect-btn" id="connectBtn">Connect TON Wallet</button>
-    <button class="disconnect-btn" id="disconnectBtn" style="display:none;">Disconnect</button>
-    <div class="welcome-block">
-      <div class="welcome-title">Welcome To Keeper!</div>
-      <div class="welcome-card">
-        <div class="welcome-switch"></div>
-      </div>
-    </div>
-  </div>
-  <script>
-    // TON Connect UI
-    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-      manifestUrl: 'https://ton.vote/tonconnect-manifest.json'
-    });
+</div>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+/* === Telegram Mini App: прозрачный хедер === */
+if(window.Telegram && Telegram.WebApp) {
+    Telegram.WebApp.expand();
+    Telegram.WebApp.setHeaderColor('rgba(0,0,0,0)');
+    Telegram.WebApp.setBackgroundColor('#70c5ce');
+}
 
-    const connectBtn = document.getElementById('connectBtn');
-    const disconnectBtn = document.getElementById('disconnectBtn');
-    const balanceBlock = document.getElementById('balanceBlock');
-    const balanceMain = document.getElementById('balanceMain');
-    const balanceDecimals = document.getElementById('balanceDecimals');
-    const balanceAddress = document.getElementById('balanceAddress');
+/* === Глобальные переменные === */
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+let coins = parseInt(localStorage.getItem('flappy_coins') || '0');
+let selectedSkin = localStorage.getItem('flappy_skin') || 'yellow';
+let ownedSkins = JSON.parse(localStorage.getItem('flappy_skins') || '["yellow"]');
+let gameState = 'start'; // start, playing, gameover
+let score = 0;
+let pipes = [];
+let bird = {};
+let pipeTimer = 0;
+let gravity = 0.32;
+let flap = -6.5;
+let pipeGap = 170;
+let pipeSpeed = 1.4;
+let groundHeight = 80;
+let lastTap = 0;
 
-    function shortAddr(addr) {
-      if (!addr) return '';
-      return addr.slice(0, 4) + '...' + addr.slice(-4);
-    }
-    function animateBalance(newValue) {
-      let current = parseFloat(balanceMain.textContent + balanceDecimals.textContent.replace('.', ''));
-      let duration = 700;
-      let start = performance.now();
-      function animate(now) {
-        let progress = Math.min((now - start) / duration, 1);
-        let value = current + (newValue - current) * progress;
-        let [main, decimals] = value.toFixed(3).split('.');
-        balanceMain.textContent = main;
-        balanceDecimals.textContent = '.' + decimals;
-        if (progress < 1) {
-          requestAnimationFrame(animate);
+/* === Скины === */
+const skins = {
+    yellow: { color: 'gold', price: 0 },
+    blue:   { color: 'deepskyblue', price: 10 },
+    red:    { color: '#ff5252', price: 20 }
+};
+
+/* === Функции монет === */
+function saveCoins() {
+    localStorage.setItem('flappy_coins', coins);
+}
+function updateCoins() {
+    document.getElementById('coins').innerHTML = coins + ' 🪙';
+}
+
+/* === Магазин скинов === */
+function openShop() {
+    document.getElementById('shopModal').style.display = 'flex';
+    // Отметить выбранный скин
+    document.querySelectorAll('.skin-btn').forEach(btn => {
+        btn.classList.remove('selected');
+        if(btn.dataset.skin === selectedSkin) btn.classList.add('selected');
+        btn.onclick = function() {
+            let skin = btn.dataset.skin;
+            if(!skin) return;
+            if(ownedSkins.includes(skin)) {
+                selectedSkin = skin;
+                localStorage.setItem('flappy_skin', selectedSkin);
+                document.querySelectorAll('.skin-btn').forEach(b=>b.classList.remove('selected'));
+                btn.classList.add('selected');
+                closeShop();
+                draw();
+            } else {
+                // Покупка
+                let price = skins[skin].price;
+                if(coins >= price) {
+                    coins -= price;
+                    ownedSkins.push(skin);
+                    localStorage.setItem('flappy_skins', JSON.stringify(ownedSkins));
+                    saveCoins();
+                    updateCoins();
+                    selectedSkin = skin;
+                    localStorage.setItem('flappy_skin', selectedSkin);
+                    document.querySelectorAll('.skin-btn').forEach(b=>b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    closeShop();
+                    draw();
+                } else {
+                    alert('Недостаточно монет!');
+                }
+            }
         }
-      }
-      requestAnimationFrame(animate);
+    });
+}
+function closeShop() {
+    document.getElementById('shopModal').style.display = 'none';
+}
+
+/* === Навигация нижнего бара === */
+document.getElementById('btnGame').onclick = function() {
+    this.classList.add('selected');
+    document.getElementById('btnShop').classList.remove('selected');
+    document.getElementById('btnSettings').classList.remove('selected');
+    closeShop();
+};
+document.getElementById('btnShop').onclick = function() {
+    this.classList.add('selected');
+    document.getElementById('btnGame').classList.remove('selected');
+    document.getElementById('btnSettings').classList.remove('selected');
+    openShop();
+};
+document.getElementById('btnSettings').onclick = function() {
+    this.classList.add('selected');
+    document.getElementById('btnGame').classList.remove('selected');
+    document.getElementById('btnShop').classList.remove('selected');
+    alert('Настройки пока недоступны 🙂');
+};
+
+/* === Инициализация птицы === */
+function resetBird() {
+    bird = {
+        x: 80,
+        y: canvas.height/2,
+        vy: 0,
+        w: 34,
+        h: 34
+    };
+}
+
+/* === Рисуем птицу с тенью === */
+function drawBird() {
+    // Тень
+    ctx.save();
+    ctx.globalAlpha = 0.18;
+    ctx.beginPath();
+    ctx.ellipse(bird.x+bird.w/2, bird.y+bird.h-2, 18, 6, 0, 0, 2*Math.PI);
+    ctx.fillStyle = "#222";
+    ctx.fill();
+    ctx.restore();
+    // Птица
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(bird.x+17, bird.y+17, 17, 0, 2*Math.PI);
+    ctx.fillStyle = skins[selectedSkin].color;
+    ctx.shadowColor = "#fff";
+    ctx.shadowBlur = 8;
+    ctx.fill();
+    ctx.restore();
+    // Глаз
+    ctx.beginPath();
+    ctx.arc(bird.x+23, bird.y+15, 5, 0, 2*Math.PI);
+    ctx.fillStyle = "#fff";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(bird.x+25, bird.y+15, 2, 0, 2*Math.PI);
+    ctx.fillStyle = "#222";
+    ctx.fill();
+    // Клюв
+    ctx.beginPath();
+    ctx.moveTo(bird.x+32, bird.y+20);
+    ctx.lineTo(bird.x+40, bird.y+22);
+    ctx.lineTo(bird.x+32, bird.y+24);
+    ctx.closePath();
+    ctx.fillStyle = "#ffb300";
+    ctx.fill();
+    // Обводка
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#222";
+    ctx.strokeRect(bird.x, bird.y, bird.w, bird.h);
+}
+
+/* === Рисуем трубы === */
+function drawPipes() {
+    pipes.forEach(pipe => {
+        // Верхняя труба
+        ctx.save();
+        ctx.fillStyle = "#1edc36";
+        ctx.fillRect(pipe.x, 0, 52, pipe.top);
+        ctx.fillStyle = "#0a8e21";
+        ctx.fillRect(pipe.x, pipe.top-18, 52, 18);
+        ctx.restore();
+        // Нижняя труба
+        ctx.save();
+        ctx.fillStyle = "#1edc36";
+        ctx.fillRect(pipe.x, pipe.bottom, 52, canvas.height - pipe.bottom - groundHeight);
+        ctx.fillStyle = "#0a8e21";
+        ctx.fillRect(pipe.x, pipe.bottom, 52, 18);
+        ctx.restore();
+    });
+}
+
+/* === Рисуем фон === */
+function drawBackground() {
+    // Небо уже есть
+    // Облака
+    ctx.save();
+    ctx.globalAlpha = 0.13;
+    for(let i=0;i<3;i++) {
+        ctx.beginPath();
+        ctx.arc(80+i*120, 160, 50, 0, 2*Math.PI);
+        ctx.arc(120+i*120, 140, 40, 0, 2*Math.PI);
+        ctx.arc(160+i*120, 170, 30, 0, 2*Math.PI);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
     }
-    connectBtn.addEventListener('click', () => {
-      tonConnectUI.openModal();
-    });
-    disconnectBtn.addEventListener('click', async () => {
-      await tonConnectUI.disconnect();
-      balanceBlock.style.display = 'none';
-      connectBtn.style.display = 'block';
-      disconnectBtn.style.display = 'none';
-    });
-    tonConnectUI.onStatusChange(async walletInfo => {
-      if (walletInfo && walletInfo.account && walletInfo.account.address) {
-        connectBtn.style.display = 'none';
-        disconnectBtn.style.display = 'block';
-        balanceBlock.style.display = 'flex';
-        let addr = walletInfo.account.address;
-        balanceAddress.textContent = shortAddr(addr);
-        try {
-          const resp = await fetch(`https://tonapi.io/v2/accounts/${addr}`);
-          const data = await resp.json();
-          let ton = data.balance ? (parseInt(data.balance) / 1e9) : 0;
-          animateBalance(ton);
-        } catch (e) {
-          animateBalance(0);
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    // Город
+    ctx.save();
+    ctx.globalAlpha = 0.18;
+    ctx.fillStyle = "#b2e6f2";
+    for(let i=0;i<8;i++) {
+        ctx.fillRect(i*50, 480, 30, 80);
+    }
+    ctx.restore();
+}
+
+/* === Рисуем землю === */
+function drawGround() {
+    ctx.save();
+    ctx.fillStyle = "#ded895";
+    ctx.fillRect(0, canvas.height-groundHeight, canvas.width, groundHeight);
+    ctx.restore();
+}
+
+/* === Рисуем счет === */
+function drawScore() {
+    ctx.save();
+    ctx.font = "bold 48px 'SF Pro Display', Arial, sans-serif";
+    ctx.fillStyle = "#fff";
+    ctx.textAlign = "center";
+    ctx.shadowColor = "#222";
+    ctx.shadowBlur = 8;
+    ctx.fillText(score, canvas.width/2, 80);
+    ctx.restore();
+}
+
+/* === Основной рендер === */
+function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    drawBackground();
+    drawPipes();
+    drawGround();
+    drawBird();
+    if(gameState === 'playing') drawScore();
+    if(gameState === 'start') {
+        ctx.save();
+        ctx.font = "bold 32px 'SF Pro Display', Arial, sans-serif";
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "center";
+        ctx.shadowColor = "#222";
+        ctx.shadowBlur = 8;
+        ctx.fillText("Тапните чтобы начать", canvas.width/2, canvas.height/2-40);
+        ctx.font = "bold 22px 'SF Pro Display', Arial, sans-serif";
+        ctx.fillText("Flappy Bird MiniApp", canvas.width/2, canvas.height/2+8);
+        ctx.restore();
+    }
+    if(gameState === 'gameover') {
+        ctx.save();
+        ctx.font = "bold 38px 'SF Pro Display', Arial, sans-serif";
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "center";
+        ctx.shadowColor = "#222";
+        ctx.shadowBlur = 8;
+        ctx.fillText("Game Over", canvas.width/2, canvas.height/2-30);
+        ctx.font = "bold 22px 'SF Pro Display', Arial, sans-serif";
+        ctx.fillText("Счет: "+score, canvas.width/2, canvas.height/2+8);
+        ctx.fillText("Тапните для рестарта", canvas.width/2, canvas.height/2+38);
+        ctx.restore();
+    }
+}
+
+/* === Основной игровой цикл === */
+function gameLoop() {
+    if(gameState !== 'playing') {
+        draw();
+        return;
+    }
+    // Физика птицы
+    bird.vy += gravity;
+    bird.y += bird.vy;
+    // Движение труб
+    pipes.forEach(pipe => pipe.x -= pipeSpeed);
+    // Добавление новых труб
+    pipeTimer += 1;
+    if(pipeTimer > 90) {
+        let top = Math.random()*(canvas.height-pipeGap-groundHeight-80)+30;
+        pipes.push({
+            x: canvas.width,
+            top: top,
+            bottom: top+pipeGap,
+            passed: false
+        });
+        pipeTimer = 0;
+    }
+    // Удаление старых труб
+    if(pipes.length && pipes[0].x < -60) pipes.shift();
+    // Столкновения
+    let collision = false;
+    pipes.forEach(pipe => {
+        if(!pipe.passed && pipe.x+52 < bird.x) {
+            score++;
+            coins++;
+            pipe.passed = true;
+            saveCoins();
+            updateCoins();
         }
-      } else {
-        balanceBlock.style.display = 'none';
-        connectBtn.style.display = 'block';
-        disconnectBtn.style.display = 'none';
-      }
+        if(
+            bird.x+bird.w > pipe.x && bird.x < pipe.x+52 &&
+            (bird.y < pipe.top || bird.y+bird.h > pipe.bottom)
+        ) collision = true;
     });
-    // Первое состояние: только кнопка connect
-    balanceBlock.style.display = 'none';
-    connectBtn.style.display = 'block';
-    disconnectBtn.style.display = 'none';
-  </script>
+    if(bird.y+bird.h > canvas.height-groundHeight || bird.y < 0) collision = true;
+    if(collision) {
+        gameState = 'gameover';
+        setTimeout(()=>draw(), 100); // задержка для плавности
+        return;
+    }
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+/* === Обработка тапов === */
+function jump() {
+    if(gameState === 'start') {
+        gameState = 'playing';
+        score = 0;
+        pipes = [];
+        pipeTimer = 0;
+        resetBird();
+        gameLoop();
+    } else if(gameState === 'playing') {
+        bird.vy = flap;
+    } else if(gameState === 'gameover') {
+        setTimeout(()=>{
+            gameState = 'start';
+            resetBird();
+            pipes = [];
+            pipeTimer = 0;
+            draw();
+        }, 350); // задержка для плавности
+    }
+}
+canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    jump();
+});
+canvas.addEventListener('mousedown', e => {
+    e.preventDefault();
+    jump();
+});
+
+/* === Инициализация === */
+function init() {
+    updateCoins();
+    resetBird();
+    draw();
+}
+init();
+
+/* === Окно ресайза (для мобильных) === */
+window.addEventListener('resize', ()=>{
+    // Можно сделать адаптив, если нужно
+});
+</script>
 </body>
 </html>
