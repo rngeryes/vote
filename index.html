@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
   <title>Mining Game</title>
   <style>
     :root {
@@ -42,12 +43,14 @@
       overflow-x: hidden;
     }
     .wrap {
-      max-width: 420px;
+      max-width: 380px;
       margin: 0 auto;
-      padding-bottom: 70px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+    }
+    @media (max-width: 480px) {
+      .wrap { max-width: 360px; }
     }
     .section-title {
       color: var(--text2);
@@ -308,6 +311,15 @@
     <button class="bar-btn" data-tab="top">TOP</button>
     <button class="bar-btn" data-tab="wallet">WALLET</button>
   </nav>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.Telegram && Telegram.WebApp) {
+        Telegram.WebApp.setHeaderColor && Telegram.WebApp.setHeaderColor('#000000');
+        Telegram.WebApp.setBackgroundColor && Telegram.WebApp.setBackgroundColor('#000000');
+      }
+    });
+  </script>
   <script>
     // --- State ---
     let mining = false;
@@ -470,6 +482,8 @@
     document.querySelectorAll('.bar-btn').forEach(btn => {
       btn.onclick = () => setTab(btn.dataset.tab);
     });
+
+
     // --- Mining ---
     function toggleMining() {
       mining = !mining;
